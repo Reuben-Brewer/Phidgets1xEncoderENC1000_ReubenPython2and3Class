@@ -10,11 +10,13 @@ With an encoder, you can keep track of how far your motor has turned,
 which then allows you to control the position and velocity in your code. 
 This Phidget connects to your computer through a VINT Hub."
 
+
 Quadrature Encoder Phidget
 
 ID: ENC1000_0
 
 https://www.phidgets.com/?tier=3&catid=4&pcid=2&prodid=959
+
 
 Reuben Brewer, Ph.D.
 
@@ -22,9 +24,11 @@ reuben.brewer@gmail.com
 
 www.reubotics.com
 
+
 Apache 2 License
 
 Software Revision D, 02/21/2022
+
 
 Verified working on: 
 
