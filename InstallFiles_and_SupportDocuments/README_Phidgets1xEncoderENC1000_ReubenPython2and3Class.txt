@@ -1,4 +1,5 @@
-########################  
+########################
+
 Phidgets1xEncoderENC1000_ReubenPython2and3Class
 
 Wrapper (including ability to hook to Tkinter GUI) to control Quadrature Encoder Phidget ENC1000 (VINT).
@@ -22,7 +23,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision D, 02/21/2022
+Software Revision E, 03/13/2022
 
 Verified working on: 
 Python 2.7, 3.8.

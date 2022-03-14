@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision D, 02/21/2022
+Software Revision E, 03/13/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -80,6 +80,21 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
 
+        #########################################################
+        self.CurrentTime_CalculatedFromMainThread = -11111.0
+        self.StartingTime_CalculatedFromMainThread = -11111.0
+        self.LastTime_CalculatedFromMainThread = -11111.0
+        self.DataStreamingFrequency_CalculatedFromMainThread = -11111.0
+        self.DataStreamingDeltaT_CalculatedFromMainThread = -11111.0
+        #########################################################
+
+        #########################################################
+        self.DetectedDeviceName = "default"
+        self.DetectedDeviceID = "default"
+        self.DetectedDeviceVersion = "default"
+        self.DetectedDeviceSerialNumber = "default"
+        #########################################################
+
         self.EncodersList_PhidgetsEncoderObjects = list()
 
         self.NumberOfEncoders = 1
@@ -127,7 +142,21 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                                                                                      ("ENCODER_IO_MODE_LINE_DRIVER_10K", 3),
                                                                                      ("ENCODER_IO_MODE_OPEN_COLLECTOR_2K2", 4),
                                                                                      ("ENCODER_IO_MODE_OPEN_COLLECTOR_10K", 5)])
-        self.MostRecentDutyCycleDict = dict()
+
+        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
+                                             ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
+                                             ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
+                                             ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
+                                             ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
+                                             ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
+                                             ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
+                                             ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
+                                             ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
+                                             ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
+                                             ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
+                                             ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
+                                             ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
+                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
         ##########################################
         ##########################################
@@ -273,6 +302,15 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                 self.GUI_COLUMNSPAN = 0
 
             print("GUI_COLUMNSPAN = " + str(self.GUI_COLUMNSPAN))
+            ##########################################
+
+            ##########################################
+            if "GUI_STICKY" in self.GUIparametersDict:
+                self.GUI_STICKY = str(self.GUIparametersDict["GUI_STICKY"])
+            else:
+                self.GUI_STICKY = "w"
+
+            print("GUI_STICKY = " + str(self.GUI_STICKY))
             ##########################################
 
         else:
@@ -455,18 +493,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.PrintToGui_Label_TextInputHistory_List = [" "]*self.NumberOfPrintLines
         self.PrintToGui_Label_TextInput_Str = ""
         self.GUI_ready_to_be_updated_flag = 0
-        #########################################################
-
-        #########################################################
-        self.CurrentTime_CalculatedFromMainThread = -11111
-        self.LastTime_CalculatedFromMainThread = -11111
-        self.DataStreamingFrequency_CalculatedFromMainThread = -11111
-        self.DataStreamingDeltaT_CalculatedFromMainThread = -11111
-
-        self.DetectedDeviceName = "default"
-        self.DetectedDeviceID = "default"
-        self.DetectedDeviceVersion = "default"
-        self.DetectedDeviceSerialNumber = "default"
         #########################################################
 
         #########################################################
@@ -843,7 +869,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        self.MostRecentDutyCycleDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
+        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
                                              ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
                                              ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
                                              ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
@@ -858,7 +884,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                                              ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
                                              ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
-        return self.MostRecentDutyCycleDict
+        return self.MostRecentDataDict
     ##########################################################################################################
     ##########################################################################################################
 
@@ -888,11 +914,13 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         
         self.MainThread_still_running_flag = 1
 
+        self.StartingTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
+
         ###############################################
         while self.EXIT_PROGRAM_FLAG == 0:
 
             ###############################################
-            self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
+            self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString() - self.StartingTime_CalculatedFromMainThread
             ###############################################
 
             ###############################################
@@ -979,7 +1007,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                           padx = self.GUI_PADX,
                           pady = self.GUI_PADY,
                           rowspan = self.GUI_ROWSPAN,
-                          columnspan= self.GUI_COLUMNSPAN)
+                          columnspan= self.GUI_COLUMNSPAN,
+                          sticky = self.GUI_STICKY)
         ###################################################
 
         ###################################################
