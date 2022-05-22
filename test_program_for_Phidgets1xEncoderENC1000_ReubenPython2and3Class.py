@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision E, 03/13/2022
+Software Revision F, 05/22/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -497,7 +497,7 @@ if __name__ == '__main__':
         ###################################################
 
         ###################################################
-        if USE_ENCODER_FLAG == 1:
+        if ENCODER_OPEN_FLAG == 1:
 
             Encoder_MostRecentDict = Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject.GetMostRecentDataDict()
 
