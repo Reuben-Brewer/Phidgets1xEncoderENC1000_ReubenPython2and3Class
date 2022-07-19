@@ -1,4 +1,4 @@
-########################  
+########################
 
 Phidgets1xEncoderENC1000_ReubenPython2and3Class
 
@@ -11,13 +11,11 @@ With an encoder, you can keep track of how far your motor has turned,
 which then allows you to control the position and velocity in your code. 
 This Phidget connects to your computer through a VINT Hub."
 
-
 Quadrature Encoder Phidget
 
 ID: ENC1000_0
 
 https://www.phidgets.com/?tier=3&catid=4&pcid=2&prodid=959
-
 
 Reuben Brewer, Ph.D.
 
@@ -25,11 +23,9 @@ reuben.brewer@gmail.com
 
 www.reubotics.com
 
-
 Apache 2 License
 
-Software Revision F, 05/22/2022
-
+Software Revision G, 07/18/2022
 
 Verified working on: 
 
@@ -47,11 +43,19 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
+Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
+
+Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['future.builtins', 'MyPrint_ReubenPython2and3Class']
+
+Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
+
+Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22']
+
 https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
 
-pip install Phidget22 (with "sudo" if on Linux/Raspberry Pi)
+pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
 
