@@ -6,15 +6,18 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 05/22/2022
+Software Revision G, 07/18/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+#########################################################
 from LowPassFilter_ReubenPython2and3Class import *
+#########################################################
 
+#########################################################
 import os, sys, platform
 import time, datetime
 import math
@@ -22,8 +25,9 @@ import collections
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
 import traceback
+#########################################################
 
-###############
+#########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -32,39 +36,36 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+#########################################################
 
-###############
+#########################################################
 if sys.version_info[0] < 3:
     import Queue  # Python 2
 else:
     import queue as Queue  # Python 3
-###############
+#########################################################
 
-###############
+#########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input
-############### #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
+######################################################### #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
-###############
+#########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+#########################################################
 
 ###########################################################
-###########################################################
-#To install Phidget22, enter folder "Phidget22Python_1.0.0.20190107\Phidget22Python" and type "python setup.py install"
 from Phidget22.PhidgetException import *
 from Phidget22.Phidget import *
 from Phidget22.Devices.Log import *
 from Phidget22.LogLevel import *
 from Phidget22.Devices.Encoder import *
-###########################################################
 ###########################################################
 
 class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
@@ -78,7 +79,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         #########################################################
         #########################################################
         self.EXIT_PROGRAM_FLAG = 0
-        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = -1
+        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
 
@@ -141,21 +142,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                                                                                      ("ENCODER_IO_MODE_OPEN_COLLECTOR_2K2", 4),
                                                                                      ("ENCODER_IO_MODE_OPEN_COLLECTOR_10K", 5)])
 
-        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
-                                             ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
-                                             ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
-                                             ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
-                                             ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
-                                             ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
-                                             ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
-                                             ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
-                                             ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
-                                             ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
-                                             ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
-                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
-
+        self.MostRecentDataDict = dict()
         #########################################################
         #########################################################
 
@@ -201,23 +188,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             #########################################################
             if "root" in self.GUIparametersDict:
                 self.root = self.GUIparametersDict["root"]
-                self.RootIsOwnedExternallyFlag = 1
             else:
-                self.root = None
-                self.RootIsOwnedExternallyFlag = 0
-
-            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: RootIsOwnedExternallyFlag: " + str(self.RootIsOwnedExternallyFlag))
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
-            if "GUI_RootAfterCallbackInterval_Milliseconds" in self.GUIparametersDict:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_RootAfterCallbackInterval_Milliseconds", self.GUIparametersDict["GUI_RootAfterCallbackInterval_Milliseconds"], 0.0, 1000.0))
-            else:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = 30
-
-            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: GUI_RootAfterCallbackInterval_Milliseconds: " + str(self.GUI_RootAfterCallbackInterval_Milliseconds))
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, must pass in 'root'")
+                return
             #########################################################
             #########################################################
 
@@ -314,7 +287,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             if "GUI_ROWSPAN" in self.GUIparametersDict:
                 self.GUI_ROWSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROWSPAN", self.GUIparametersDict["GUI_ROWSPAN"], 0.0, 1000.0))
             else:
-                self.GUI_ROWSPAN = 0
+                self.GUI_ROWSPAN = 1
 
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: GUI_ROWSPAN: " + str(self.GUI_ROWSPAN))
             #########################################################
@@ -325,7 +298,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             if "GUI_COLUMNSPAN" in self.GUIparametersDict:
                 self.GUI_COLUMNSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMNSPAN", self.GUIparametersDict["GUI_COLUMNSPAN"], 0.0, 1000.0))
             else:
-                self.GUI_COLUMNSPAN = 0
+                self.GUI_COLUMNSPAN = 1
 
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: GUI_COLUMNSPAN: " + str(self.GUI_COLUMNSPAN))
             #########################################################
@@ -345,9 +318,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         else:
             self.GUIparametersDict = dict()
             self.USE_GUI_FLAG = 0
-            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: No GUIparametersDict present, setting USE_GUI_FLAG = " + str(self.USE_GUI_FLAG))
+            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: No GUIparametersDict present, setting USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
 
-        #print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: GUIparametersDict = " + str(self.GUIparametersDict))
+        #print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: GUIparametersDict: " + str(self.GUIparametersDict))
         #########################################################
         #########################################################
 
@@ -362,9 +335,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             except:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, VINT_DesiredSerialNumber invalid.")
         else:
-            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class ERROR: Must initialize object with 'VINT_DesiredSerialNumber' argument.")
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
-            return
+            self.VINT_DesiredSerialNumber = -1
 
         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: VINT_DesiredSerialNumber: " + str(self.VINT_DesiredSerialNumber))
         #########################################################
@@ -379,7 +350,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, VINT_DesiredPortNumber invalid.")
         else:
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, must initialize object with 'VINT_DesiredPortNumber' argument.")
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
             return
 
         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: VINT_DesiredPortNumber: " + str(self.VINT_DesiredPortNumber))
@@ -395,7 +365,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, DesiredDeviceID invalid.")
         else:
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class ERROR: Must initialize object with 'DesiredDeviceID' argument.")
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
             return
 
         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: DesiredDeviceID: " + str(self.DesiredDeviceID))
@@ -458,7 +427,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     self.EncodersList_CPR.append(CPR)
             else:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_CPR' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                 return
         else:
             self.EncodersList_CPR = [1] * self.NumberOfEncoders
@@ -478,7 +446,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
             else:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                 return
         else:
             self.EncodersList_SpeedExponentialFilterLambda = [1.0] * self.NumberOfEncoders
@@ -498,11 +465,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                         self.EncodersList_ElectricalIOmode.append(ElectricalIOmode_TEMP)
                     else:
                         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_ElectricalIOmode' values must be contained within the set " + str(self.EncodersList_ElectricalIOmode_AcceptableValuesDictStringsAsKeys))
-                        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                         return
             else:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_ElectricalIOmode' must be a length of length 4 with values of 0 or 1.")
-                self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                 return
         else:
             self.EncodersList_ElectricalIOmode = ["ENCODER_IO_MODE_PUSH_PULL"] * self.NumberOfEncoders
@@ -536,13 +501,11 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
     
                 if LOWPASSFILTER_OPEN_FLAG != 1:
                     print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Failed to open LowPassFilter_ReubenPython2and3ClassObject.")
-                    self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                     return
 
         except:
             exceptions = sys.exc_info()[0]
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Exceptions: %s" % exceptions)
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
             return
         #########################################################
         #########################################################
@@ -566,7 +529,10 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             self.Encoder0object = Encoder()
             self.EncodersList_PhidgetsEncoderObjects.append(self.Encoder0object)
             self.Encoder0object.setHubPort(self.VINT_DesiredPortNumber)
-            self.Encoder0object.setDeviceSerialNumber(self.VINT_DesiredSerialNumber)
+
+            if self.VINT_DesiredSerialNumber != -1:
+                self.Encoder0object.setDeviceSerialNumber(self.VINT_DesiredSerialNumber)
+
             self.Encoder0object.setOnPositionChangeHandler(self.Encoder0onPositionChangeCallback)
             self.Encoder0object.setOnAttachHandler(self.Encoder0onAttachCallback)
             self.Encoder0object.setOnDetachHandler(self.Encoder0onDetachCallback)
@@ -654,10 +620,11 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
             #########################################################
             #########################################################
-            if self.VINT_DetectedSerialNumber != self.VINT_DesiredSerialNumber:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: The desired Serial Number (" + str(self.VINT_DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.VINT_DetectedSerialNumber) + ").")
-                input("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Press any key (and enter) to exit.")
-                sys.exit()
+            if self.VINT_DesiredSerialNumber != -1:  # '-1' means we should open the device regardless os serial number.
+                if self.VINT_DetectedSerialNumber != self.VINT_DesiredSerialNumber:
+                    print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: The desired Serial Number (" + str(self.VINT_DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.VINT_DetectedSerialNumber) + ").")
+                    input("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Press any key (and enter) to exit.")
+                    sys.exit()
             #########################################################
             #########################################################
 
@@ -699,7 +666,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
     ##########################################################################################################
     ##########################################################################################################
     def __del__(self):
-        dummy_var = 0
+        pass
     ##########################################################################################################
     ##########################################################################################################
 
@@ -795,15 +762,17 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                   " DataInterval to " + \
                   str(self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].getDataInterval()) + \
                   "ms.")
+            ##############################
 
-            self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setPositionChangeTrigger(0) #Setting the trigger to 0 makes the onPositionChange callback fire every self.EncoderUpdateDeltaT_ms
-
+            ##############################
             self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setIOMode(self.EncodersList_ElectricalIOmode_AcceptableValuesDictStringsAsKeys[self.EncodersList_ElectricalIOmode[EncoderChannel]])
             print("EncoderGENERALonAttachCallback: Set EncoderChannel " + \
                   str(EncoderChannel) + \
                   " IOmode to " + \
                   str(self.EncodersList_ElectricalIOmode_AcceptableValuesDictIntsAsKeys[self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].getIOMode()]))
+            ##############################
 
+            ##############################
             self.EncodersList_PhidgetsEncoderObjects[EncoderChannel].setPositionChangeTrigger(0) #Setting the trigger to 0 makes the onPositionChange callback fire every self.EncoderUpdateDeltaT_ms
             print("EncoderGENERALonAttachCallback: Set EncoderChannel " + \
             str(EncoderChannel) + \
@@ -953,22 +922,26 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
-                                             ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
-                                             ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
-                                             ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
-                                             ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
-                                             ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
-                                             ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
-                                             ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
-                                             ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
-                                             ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
-                                             ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
-                                             ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
-                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
+        if self.EXIT_PROGRAM_FLAG == 0:
+            self.MostRecentDataDict = dict([("EncodersList_Position_EncoderTicks", self.EncodersList_Position_EncoderTicks),
+                                                 ("EncodersList_Position_Rev", self.EncodersList_Position_Rev),
+                                                 ("EncodersList_Position_Degrees", self.EncodersList_Position_Degrees),
+                                                 ("EncodersList_IndexPosition_EncoderTicks", self.EncodersList_IndexPosition_EncoderTicks),
+                                                 ("EncodersList_IndexPosition_Rev", self.EncodersList_IndexPosition_Rev),
+                                                 ("EncodersList_IndexPosition_Degrees", self.EncodersList_IndexPosition_Degrees),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Raw", self.EncodersList_Speed_EncoderTicksPerSecond_Raw),
+                                                 ("EncodersList_Speed_RPM_Raw", self.EncodersList_Speed_RPM_Raw),
+                                                 ("EncodersList_Speed_RPS_Raw", self.EncodersList_Speed_RPS_Raw),
+                                                 ("EncodersList_Speed_EncoderTicksPerSecond_Filtered", self.EncodersList_Speed_EncoderTicksPerSecond_Filtered),
+                                                 ("EncodersList_Speed_RPM_Filtered", self.EncodersList_Speed_RPM_Filtered),
+                                                 ("EncodersList_Speed_RPS_Filtered", self.EncodersList_Speed_RPS_Filtered),
+                                                 ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
+                                                 ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
-        return self.MostRecentDataDict
+            return self.MostRecentDataDict
+
+        else:
+            return dict() #So that we're not returning variables during the close-down process.
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1049,37 +1022,26 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent=None):
+    def StartGUI(self, GuiParent):
 
-        GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        GUI_Thread_ThreadingObject.start()
+        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
+        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
+        self.GUI_Thread_ThreadingObject.start()
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def GUI_Thread(self, parent=None):
+    def GUI_Thread(self, parent):
 
         print("Starting the GUI_Thread for Phidgets1xEncoderENC1000_ReubenPython2and3Class object.")
 
-        ###################################################
-        if parent == None:  #This class object owns root and must handle it properly
-            self.root = Tk()
-            self.parent = self.root
+        #################################################
+        self.root = parent
+        self.parent = parent
+        #################################################
 
-            ################################################### SET THE DEFAULT FONT FOR ALL WIDGETS CREATED AFTTER/BELOW THIS CALL
-            default_font = tkFont.nametofont("TkDefaultFont")
-            default_font.configure(size=8)
-            self.root.option_add("*Font", default_font)
-            ###################################################
-
-        else:
-            self.root = parent
-            self.parent = parent
-        ###################################################
-
-        ###################################################
+        #################################################
         self.myFrame = Frame(self.root)
 
         if self.UseBorderAroundThisGuiObjectFlag == 1:
@@ -1093,42 +1055,34 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                           rowspan = self.GUI_ROWSPAN,
                           columnspan= self.GUI_COLUMNSPAN,
                           sticky = self.GUI_STICKY)
-        ###################################################
+        #################################################
 
-        ###################################################
+        #################################################
         self.TKinter_LightGreenColor = '#%02x%02x%02x' % (150, 255, 150) #RGB
         self.TKinter_LightRedColor = '#%02x%02x%02x' % (255, 150, 150) #RGB
         self.TKinter_LightYellowColor = '#%02x%02x%02x' % (255, 255, 150)  # RGB
         self.TKinter_DefaultGrayColor = '#%02x%02x%02x' % (240, 240, 240)  # RGB
-        self.TkinterScaleWidth = 10
-        self.TkinterScaleLength = 250
-        ###################################################
+        #################################################
 
         #################################################
-        self.device_info_label = Label(self.myFrame, text="Device Info", width=50) #, font=("Helvetica", 16)
+        self.DeviceInfo_Label = Label(self.myFrame, text="Device Info", width=50)
 
-        self.device_info_label["text"] = self.NameToDisplay_UserSet + \
+        self.DeviceInfo_Label["text"] = self.NameToDisplay_UserSet + \
                                         "\nDevice Name: " + self.DetectedDeviceName + \
                                         "\nDevice Serial Number: " + str(self.VINT_DetectedSerialNumber) + \
                                         "\nDevice ID: " + str(self.DetectedDeviceID) + \
                                         "\nDevice Version: " + str(self.DetectedDeviceVersion)
 
-        self.device_info_label.grid(row=0, column=0, padx=5, pady=1, columnspan=1, rowspan=1)
+        self.DeviceInfo_Label.grid(row=0, column=0, padx=5, pady=1, columnspan=1, rowspan=1)
         #################################################
 
         #################################################
         self.Encoders_Label = Label(self.myFrame, text="Encoders_Label", width=120)
-        self.Encoders_Label.grid(row=0, column=1, padx=5, pady=1, columnspan=1, rowspan=10)
+        self.Encoders_Label.grid(row=0, column=1, padx=5, pady=1, columnspan=1, rowspan=1)
         #################################################
         
         #################################################
-
         self.EncoderHomingButtonsFrame = Frame(self.myFrame)
-
-        #if self.UseBorderAroundThisGuiObjectFlag == 1:
-        #    self.myFrame["borderwidth"] = 2
-        #    self.myFrame["relief"] = "ridge"
-
         self.EncoderHomingButtonsFrame.grid(row = 1, column = 0, padx = 1, pady = 1, rowspan = 1, columnspan = 1)
 
         self.EncodersList_HomingButtonObjects = []
@@ -1137,28 +1091,15 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             self.EncodersList_HomingButtonObjects[EncoderChannel].grid(row=1, column=EncoderChannel, padx=1, pady=1)
         #################################################
 
-        ########################
+        #################################################
         self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=75)
         if self.EnableInternal_MyPrint_Flag == 1:
-            self.PrintToGui_Label.grid(row=0, column=2, padx=1, pady=1, columnspan=1, rowspan=10)
-        ########################
+            self.PrintToGui_Label.grid(row=2, column=0, padx=1, pady=1, columnspan=10, rowspan=10)
+        #################################################
 
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.protocol("WM_DELETE_WINDOW", self.ExitProgram_Callback)
-
-            self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
-            self.GUI_ready_to_be_updated_flag = 1
-            self.root.mainloop()
-        else:
-            self.GUI_ready_to_be_updated_flag = 1
-        ########################
-
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.quit()  # Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
-            self.root.destroy()  # Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
-        ########################
+        #################################################
+        self.GUI_ready_to_be_updated_flag = 1
+        #################################################
 
     ##########################################################################################################
     ##########################################################################################################
@@ -1208,13 +1149,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     exceptions = sys.exc_info()[0]
                     print("Phidgets1xEncoderENC1000_ReubenPython2and3Class GUI_update_clock ERROR: Exceptions: %s" % exceptions)
                     traceback.print_exc()
-                #######################################################
-                #######################################################
-
-                #######################################################
-                #######################################################
-                if self.RootIsOwnedExternallyFlag == 0:  # This class object owns root and must handle it properly
-                    self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
                 #######################################################
                 #######################################################
 

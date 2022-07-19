@@ -6,22 +6,29 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 05/22/2022
+Software Revision G, 07/18/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+###########################################################
 from Phidgets1xEncoderENC1000_ReubenPython2and3Class import *
 from MyPrint_ReubenPython2and3Class import *
+###########################################################
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import threading
 import collections
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -30,22 +37,22 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
-###############
+###########################################################
 
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################################################################
 ##########################################################################################################
@@ -146,11 +153,11 @@ def GUI_Thread():
         #################################################
         TabControlObject = ttk.Notebook(root)
 
-        Tab_MainControls = ttk.Frame(TabControlObject)
-        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
-
         Tab_ENCODER = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_ENCODER, text='   ENCODER   ')
+
+        Tab_MainControls = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
 
         Tab_MyPrint = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_MyPrint, text='   MyPrint Terminal   ')
@@ -227,7 +234,7 @@ if __name__ == '__main__':
     USE_GUI_FLAG = 1
 
     global USE_TABS_IN_GUI_FLAG
-    USE_TABS_IN_GUI_FLAG = 0
+    USE_TABS_IN_GUI_FLAG = 1
 
     global USE_ENCODER_FLAG
     USE_ENCODER_FLAG = 1
@@ -259,7 +266,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_ENCODER = 0
     GUI_PADX_ENCODER = 1
-    GUI_PADY_ENCODER = 10
+    GUI_PADY_ENCODER = 1
     GUI_ROWSPAN_ENCODER = 1
     GUI_COLUMNSPAN_ENCODER = 1
 
@@ -273,7 +280,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_MYPRINT = 0
     GUI_PADX_MYPRINT = 1
-    GUI_PADY_MYPRINT = 10
+    GUI_PADY_MYPRINT = 1
     GUI_ROWSPAN_MYPRINT = 1
     GUI_COLUMNSPAN_MYPRINT = 1
     #################################################
@@ -293,7 +300,7 @@ if __name__ == '__main__':
     global root
 
     global root_Xpos
-    root_Xpos = 70
+    root_Xpos = 900
 
     global root_Ypos
     root_Ypos = 0
@@ -322,6 +329,7 @@ if __name__ == '__main__':
     ENCODER_OPEN_FLAG = -1
 
     global Encoder_MostRecentDict
+    Encoder_MostRecentDict = dict()
 
     global Encoder_MostRecentDict_EncodersList_Position_EncoderTicks
     Encoder_MostRecentDict_EncodersList_Position_EncoderTicks = [-11111.0]*1
@@ -396,7 +404,7 @@ if __name__ == '__main__':
     #################################################
     global Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject_GUIparametersDict
     Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_ENCODER_FLAG),
-                                    ("root", Tab_ENCODER), #root Tab_ENCODER
+                                    ("root", Tab_ENCODER),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
@@ -409,7 +417,7 @@ if __name__ == '__main__':
 
     global Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject_setup_dict
     Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                ("VINT_DesiredSerialNumber", 620554), #CHANGE THIS TO MATCH YOUR UNIQUE VINT
+                                                                                ("VINT_DesiredSerialNumber", -1), #-1 MEANS ANY SN, CHANGE THIS TO MATCH YOUR UNIQUE VINT
                                                                                 ("VINT_DesiredPortNumber", 0), #CHANGE THIS TO MATCH YOUR UNIQUE VINT
                                                                                 ("DesiredDeviceID", 60),
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
@@ -496,7 +504,7 @@ if __name__ == '__main__':
         CurrentTime_MainLoopThread = getPreciseSecondsTimeStampString() - StartingTime_MainLoopThread
         ###################################################
 
-        ###################################################
+        ################################################### GET's
         if ENCODER_OPEN_FLAG == 1:
 
             Encoder_MostRecentDict = Phidgets1xEncoderENC1000_ReubenPython2and3ClassObject.GetMostRecentDataDict()
@@ -518,7 +526,7 @@ if __name__ == '__main__':
 
                 Encoder_MostRecentDict_Time = Encoder_MostRecentDict["Time"]
 
-                #print("Encoder_MostRecentDict_EncodersList_Position_EncoderTicks: " + str(Encoder_MostRecentDict_EncodersList_Position_EncoderTicks))
+                #print("Encoder_MostRecentDict_Time: " + str(Encoder_MostRecentDict_Time))
         ###################################################
 
         time.sleep(0.002)
