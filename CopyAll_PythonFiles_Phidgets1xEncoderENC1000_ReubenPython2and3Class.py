@@ -6,23 +6,26 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 05/22/2022
+Software Revision G, 07/18/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
-##########################################################################################################
-##########################################################################################################
-import os, sys, time, datetime
+###########################################################
+import os
+import sys
+import time
+import datetime
 import shutil #For copying file
 import traceback
+###########################################################
 
+###########################################################
 import distutils #For CopyEntireDirectoryWithContents(). Both imports are needed to avoid errors in 'distutils.dir_util.copy_tree("./foo", "./bar")'
 from distutils import dir_util #For CopyEntireDirectoryWithContents(). Both imports are needed to avoid errors in 'distutils.dir_util.copy_tree("./foo", "./bar")'
-##########################################################################################################
-##########################################################################################################
+###########################################################
 
 ##########################################################################################################
 ##########################################################################################################
@@ -90,11 +93,11 @@ if __name__ == '__main__':
         shutil.copy("G:\\My Drive\\CodeReuben\\Phidgets1xEncoderENC1000_ReubenPython2and3Class\\Phidgets1xEncoderENC1000_ReubenPython2and3Class.py", FileDirectoryToCreate)
         shutil.copy("G:\\My Drive\\CodeReuben\\Phidgets1xEncoderENC1000_ReubenPython2and3Class\\test_program_for_Phidgets1xEncoderENC1000_ReubenPython2and3Class.py", FileDirectoryToCreate)
 
-        shutil.copy("G:\\My Drive\\CodeReuben\\MyLowPassFilterClass\\LowPassFilter_ReubenPython2and3Class\\LowPassFilter_ReubenPython2and3Class.py", FileDirectoryToCreate)
-        #shutil.copy("G:\\My Drive\\CodeReuben\\MyLowPassFilterClass\\LowPassFilter_ReubenPython2and3Class\\test_program_for_LowPassFilter_ReubenPython2and3Class.py", FileDirectoryToCreate)
+        shutil.copy("G:\\My Drive\\CodeReuben\\LowPassFilter_ReubenPython2and3Class\\LowPassFilter_ReubenPython2and3Class.py", FileDirectoryToCreate)
+        #shutil.copy("G:\\My Drive\\CodeReuben\\LowPassFilter_ReubenPython2and3Class\\test_program_for_LowPassFilter_ReubenPython2and3Class.py", FileDirectoryToCreate)
 
-        shutil.copy("G:\\My Drive\\CodeReuben\\MyPrintClass\\MyPrint_ReubenPython2and3Class\\MyPrint_ReubenPython2and3Class.py", FileDirectoryToCreate)
-        #shutil.copy("G:\\My Drive\\CodeReuben\\MyPrintClass\\MyPrint_ReubenPython2and3Class\\test_program_for_MyPrint_ReubenPython2and3Class.py", FileDirectoryToCreate)
+        shutil.copy("G:\\My Drive\\CodeReuben\\MyPrint_ReubenPython2and3Class\\MyPrint_ReubenPython2and3Class.py", FileDirectoryToCreate)
+        #shutil.copy("G:\\My Drive\\CodeReuben\\MyPrint_ReubenPython2and3Class\\test_program_for_MyPrint_ReubenPython2and3Class.py", FileDirectoryToCreate)
 
         shutil.make_archive(FileDirectoryToCreate, 'zip', FileDirectoryToCreate)
 
