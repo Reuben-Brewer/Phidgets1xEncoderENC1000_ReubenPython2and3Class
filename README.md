@@ -5,6 +5,7 @@ Phidgets1xEncoderENC1000_ReubenPython2and3Class
 Wrapper (including ability to hook to Tkinter GUI) to control Quadrature Encoder Phidget ENC1000 (VINT).
 
 From Phidgets' website:
+
 "The Quadrature Encoder Phidget interfaces with any 5V quadrature encoder. 
 A quadrature encoder is the most commonly used feedback device for a DC or stepper motor. 
 With an encoder, you can keep track of how far your motor has turned, 
@@ -25,7 +26,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision G, 07/18/2022
+Software Revision H, 08/29/2022
 
 Verified working on: 
 
@@ -45,7 +46,7 @@ Raspberry Pi Buster
 
 Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22']
 
-Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['future.builtins', 'MyPrint_ReubenPython2and3Class']
+Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
 
 Phidgets1xEncoderENC1000_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'numpy']
 
