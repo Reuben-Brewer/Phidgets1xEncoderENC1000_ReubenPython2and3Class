@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision E, 07/18/2022
+Software Revision F, 08/29/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -39,7 +39,7 @@ class LowPassFilter_ReubenPython2and3Class():
 
         #########################################################
         #########################################################
-        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = -1
+        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
         #########################################################
         #########################################################
 
@@ -323,7 +323,8 @@ class LowPassFilter_ReubenPython2and3Class():
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        return self.MostRecentDataDict
+        #deepcopy is not required as MostRecentDataDict only contains numbers (no lists, dicts, etc. that go beyond 1-level).
+        return self.MostRecentDataDict.copy()
     ##########################################################################################################
     ##########################################################################################################
 

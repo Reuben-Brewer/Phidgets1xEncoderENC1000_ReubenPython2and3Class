@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision G, 07/18/2022
+Software Revision H, 08/29/2022
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -22,6 +22,7 @@ import os, sys, platform
 import time, datetime
 import math
 import collections
+from copy import * #for deepcopy
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
 import traceback
@@ -189,7 +190,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             if "root" in self.GUIparametersDict:
                 self.root = self.GUIparametersDict["root"]
             else:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, must pass in 'root'")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, must pass in 'root'")
                 return
             #########################################################
             #########################################################
@@ -333,7 +334,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             try:
                 self.VINT_DesiredSerialNumber = int(setup_dict["VINT_DesiredSerialNumber"])
             except:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, VINT_DesiredSerialNumber invalid.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, VINT_DesiredSerialNumber invalid.")
         else:
             self.VINT_DesiredSerialNumber = -1
 
@@ -347,7 +348,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             try:
                 self.VINT_DesiredPortNumber = int(setup_dict["VINT_DesiredPortNumber"])
             except:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, VINT_DesiredPortNumber invalid.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, VINT_DesiredPortNumber invalid.")
         else:
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, must initialize object with 'VINT_DesiredPortNumber' argument.")
             return
@@ -362,9 +363,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             try:
                 self.DesiredDeviceID = int(setup_dict["DesiredDeviceID"])
             except:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, DesiredDeviceID invalid.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, DesiredDeviceID invalid.")
         else:
-            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class ERROR: Must initialize object with 'DesiredDeviceID' argument.")
+            print("Phidgets1xEncoderENC1000_ReubenPython2and3Class Error: Must initialize object with 'DesiredDeviceID' argument.")
             return
 
         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: DesiredDeviceID: " + str(self.DesiredDeviceID))
@@ -426,7 +427,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     CPR = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_CPR, EncoderChannel " + str(EncoderChannel), CPR_TEMP, 0, 250000)
                     self.EncodersList_CPR.append(CPR)
             else:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_CPR' must be a length of length 4 with values of 0 or 1.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, 'EncodersList_CPR' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
             self.EncodersList_CPR = [1] * self.NumberOfEncoders
@@ -445,10 +446,10 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     SpeedExponentialFilterLambda = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncodersList_SpeedExponentialFilterLambda, EncoderChannel " + str(EncoderChannel), SpeedExponentialFilterLambda_TEMP, 0.0, 1.0)
                     self.EncodersList_SpeedExponentialFilterLambda.append(SpeedExponentialFilterLambda)
             else:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, 'EncodersList_SpeedExponentialFilterLambda' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
-            self.EncodersList_SpeedExponentialFilterLambda = [1.0] * self.NumberOfEncoders
+            self.EncodersList_SpeedExponentialFilterLambda = [1.0] * self.NumberOfEncoders #Default to no filtering, new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
 
         print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: EncodersList_SpeedExponentialFilterLambda: " + str(self.EncodersList_SpeedExponentialFilterLambda))
         #########################################################
@@ -464,10 +465,10 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                     if ElectricalIOmode_TEMP in self.EncodersList_ElectricalIOmode_AcceptableValuesDictStringsAsKeys:
                         self.EncodersList_ElectricalIOmode.append(ElectricalIOmode_TEMP)
                     else:
-                        print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_ElectricalIOmode' values must be contained within the set " + str(self.EncodersList_ElectricalIOmode_AcceptableValuesDictStringsAsKeys))
+                        print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, 'EncodersList_ElectricalIOmode' values must be contained within the set " + str(self.EncodersList_ElectricalIOmode_AcceptableValuesDictStringsAsKeys))
                         return
             else:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: ERROR, 'EncodersList_ElectricalIOmode' must be a length of length 4 with values of 0 or 1.")
+                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, 'EncodersList_ElectricalIOmode' must be a length of length 4 with values of 0 or 1.")
                 return
         else:
             self.EncodersList_ElectricalIOmode = ["ENCODER_IO_MODE_PUSH_PULL"] * self.NumberOfEncoders
@@ -648,6 +649,12 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             #########################################################
             if self.USE_GUI_FLAG == 1:
                 self.StartGUI(self.root)
+            #########################################################
+            #########################################################
+
+            #########################################################
+            #########################################################
+            time.sleep(0.25)
             #########################################################
             #########################################################
 
@@ -938,7 +945,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                                                  ("EncodersList_ErrorCallbackFiredFlag", self.EncodersList_ErrorCallbackFiredFlag),
                                                  ("Time", self.CurrentTime_CalculatedFromMainThread)])
 
-            return self.MostRecentDataDict
+            return deepcopy(self.MostRecentDataDict) #deepcopy IS required as MostRecentDataDict contains lists.
 
         else:
             return dict() #So that we're not returning variables during the close-down process.
@@ -1166,56 +1173,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
-    def IsInputList(self, InputToCheck):
-
-        result = isinstance(InputToCheck, list)
-        return result
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self, input, number_of_leading_numbers=4, number_of_decimal_places=3):
-        IsListFlag = self.IsInputList(input)
-
-        if IsListFlag == 0:
-            float_number_list = [input]
-        else:
-            float_number_list = list(input)
-
-        float_number_list_as_strings = []
-        for element in float_number_list:
-            try:
-                element = float(element)
-                prefix_string = "{:." + str(number_of_decimal_places) + "f}"
-                element_as_string = prefix_string.format(element)
-                float_number_list_as_strings.append(element_as_string)
-            except:
-                self.MyPrint_WithoutLogFile(self.TellWhichFileWereIn() + ": ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput ERROR: " + str(element) + " cannot be turned into a float")
-                return -1
-
-        StringToReturn = ""
-        if IsListFlag == 0:
-            StringToReturn = float_number_list_as_strings[0].zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
-        else:
-            StringToReturn = "["
-            for index, StringElement in enumerate(float_number_list_as_strings):
-                if float_number_list[index] >= 0:
-                    StringElement = "+" + StringElement  # So that our strings always have either + or - signs to maintain the same string length
-
-                StringElement = StringElement.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
-
-                if index != len(float_number_list_as_strings) - 1:
-                    StringToReturn = StringToReturn + StringElement + ", "
-                else:
-                    StringToReturn = StringToReturn + StringElement + "]"
-
-        return StringToReturn
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
     def EncodersList_HomingButtonObjectsResponse(self, EncoderChannelNumber):
 
         self.EncodersList_NeedsToBeHomedFlag[EncoderChannelNumber] = 1
@@ -1255,3 +1212,175 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def IsInputList(self, InputToCheck):
+
+        result = isinstance(InputToCheck, list)
+        return result
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self, input, number_of_leading_numbers = 4, number_of_decimal_places = 3):
+
+        number_of_decimal_places = max(1, number_of_decimal_places) #Make sure we're above 1
+
+        ListOfStringsToJoin = []
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        if isinstance(input, str) == 1:
+            ListOfStringsToJoin.append(input)
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, int) == 1 or isinstance(input, float) == 1:
+            element = float(input)
+            prefix_string = "{:." + str(number_of_decimal_places) + "f}"
+            element_as_string = prefix_string.format(element)
+
+            ##########################################################################################################
+            ##########################################################################################################
+            if element >= 0:
+                element_as_string = element_as_string.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
+                element_as_string = "+" + element_as_string  # So that our strings always have either + or - signs to maintain the same string length
+            else:
+                element_as_string = element_as_string.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1 + 1)  # +1 for sign, +1 for decimal place
+            ##########################################################################################################
+            ##########################################################################################################
+
+            ListOfStringsToJoin.append(element_as_string)
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, list) == 1:
+
+            if len(input) > 0:
+                for element in input: #RECURSION
+                    ListOfStringsToJoin.append(self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(element, number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a list() or []
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, tuple) == 1:
+
+            if len(input) > 0:
+                for element in input: #RECURSION
+                    ListOfStringsToJoin.append("TUPLE" + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(element, number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a list() or []
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, dict) == 1:
+
+            if len(input) > 0:
+                for Key in input: #RECURSION
+                    ListOfStringsToJoin.append(str(Key) + ": " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(input[Key], number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a dict()
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        else:
+            ListOfStringsToJoin.append(str(input))
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        if len(ListOfStringsToJoin) > 1:
+
+            ##########################################################################################################
+            ##########################################################################################################
+
+            ##########################################################################################################
+            StringToReturn = ""
+            for Index, StringToProcess in enumerate(ListOfStringsToJoin):
+
+                ################################################
+                if Index == 0: #The first element
+                    if StringToProcess.find(":") != -1 and StringToProcess[0] != "{": #meaning that we're processing a dict()
+                        StringToReturn = "{"
+                    elif StringToProcess.find("TUPLE") != -1 and StringToProcess[0] != "(":  # meaning that we're processing a tuple
+                        StringToReturn = "("
+                    else:
+                        StringToReturn = "["
+
+                    StringToReturn = StringToReturn + StringToProcess.replace("TUPLE","") + ", "
+                ################################################
+
+                ################################################
+                elif Index < len(ListOfStringsToJoin) - 1: #The middle elements
+                    StringToReturn = StringToReturn + StringToProcess + ", "
+                ################################################
+
+                ################################################
+                else: #The last element
+                    StringToReturn = StringToReturn + StringToProcess
+
+                    if StringToProcess.find(":") != -1 and StringToProcess[-1] != "}":  # meaning that we're processing a dict()
+                        StringToReturn = StringToReturn + "}"
+                    elif StringToProcess.find("TUPLE") != -1 and StringToProcess[-1] != ")":  # meaning that we're processing a tuple
+                        StringToReturn = StringToReturn + ")"
+                    else:
+                        StringToReturn = StringToReturn + "]"
+
+                ################################################
+
+            ##########################################################################################################
+
+            ##########################################################################################################
+            ##########################################################################################################
+
+        elif len(ListOfStringsToJoin) == 1:
+            StringToReturn = ListOfStringsToJoin[0]
+
+        else:
+            StringToReturn = ListOfStringsToJoin
+
+        return StringToReturn
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+
