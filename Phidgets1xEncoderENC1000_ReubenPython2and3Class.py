@@ -6,12 +6,20 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision I, 09/21/2022
+Software Revision J, 12/31/2025
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 3.12/13 for Windows 10/11 64-bit and Raspberry Pi Bookworm (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
+
+##########################################################################################################
+##########################################################################################################
+
+#########################################################
+import ReubenGithubCodeModulePaths #Replaces the need to have "ReubenGithubCodeModulePaths.pth" within "C:\Anaconda3\Lib\site-packages".
+ReubenGithubCodeModulePaths.Enable()
+#########################################################
 
 #########################################################
 from LowPassFilter_ReubenPython2and3Class import *
@@ -25,33 +33,15 @@ import collections
 from copy import * #for deepcopy
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
+import queue as Queue
 import traceback
 #########################################################
 
 #########################################################
-if sys.version_info[0] < 3:
-    from Tkinter import * #Python 2
-    import tkFont
-    import ttk
-else:
-    from tkinter import * #Python 3
-    import tkinter.font as tkFont #Python 3
-    from tkinter import ttk
+from tkinter import *
+import tkinter.font as tkFont
+from tkinter import ttk
 #########################################################
-
-#########################################################
-if sys.version_info[0] < 3:
-    import Queue  # Python 2
-else:
-    import queue as Queue  # Python 3
-#########################################################
-
-#########################################################
-if sys.version_info[0] < 3:
-    from builtins import raw_input as input
-else:
-    from future.builtins import input as input
-######################################################### #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
 #########################################################
 import platform
@@ -69,11 +59,14 @@ from Phidget22.LogLevel import *
 from Phidget22.Devices.Encoder import *
 ###########################################################
 
+##########################################################################################################
+##########################################################################################################
+
 class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
 
     ##########################################################################################################
     ##########################################################################################################
-    def __init__(self, setup_dict): #Subclass the Tkinter Frame
+    def __init__(self, SetupDict):
 
         print("#################### Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__ starting. ####################")
 
@@ -118,7 +111,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         self.EncodersList_Speed_EncoderTicksPerSecond_Raw = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPM_Raw = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPS_Raw = [-11111.0] * self.NumberOfEncoders
-        self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject = list()
+        self.EncodersList_Speed_LowPassFilter_ListOfObjects = list()
         self.EncodersList_Speed_EncoderTicksPerSecond_Filtered = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPM_Filtered = [-11111.0] * self.NumberOfEncoders
         self.EncodersList_Speed_RPS_Filtered = [-11111.0] * self.NumberOfEncoders
@@ -171,8 +164,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "GUIparametersDict" in setup_dict:
-            self.GUIparametersDict = setup_dict["GUIparametersDict"]
+        if "GUIparametersDict" in SetupDict:
+            self.GUIparametersDict = SetupDict["GUIparametersDict"]
 
             #########################################################
             #########################################################
@@ -182,16 +175,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
                 self.USE_GUI_FLAG = 0
 
             print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
-            if "root" in self.GUIparametersDict:
-                self.root = self.GUIparametersDict["root"]
-            else:
-                print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, must pass in 'root'")
-                return
             #########################################################
             #########################################################
 
@@ -330,9 +313,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "VINT_DesiredSerialNumber" in setup_dict:
+        if "VINT_DesiredSerialNumber" in SetupDict:
             try:
-                self.VINT_DesiredSerialNumber = int(setup_dict["VINT_DesiredSerialNumber"])
+                self.VINT_DesiredSerialNumber = int(SetupDict["VINT_DesiredSerialNumber"])
             except:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, VINT_DesiredSerialNumber invalid.")
         else:
@@ -344,9 +327,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "VINT_DesiredPortNumber" in setup_dict:
+        if "VINT_DesiredPortNumber" in SetupDict:
             try:
-                self.VINT_DesiredPortNumber = int(setup_dict["VINT_DesiredPortNumber"])
+                self.VINT_DesiredPortNumber = int(SetupDict["VINT_DesiredPortNumber"])
             except:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, VINT_DesiredPortNumber invalid.")
         else:
@@ -359,9 +342,9 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "DesiredDeviceID" in setup_dict:
+        if "DesiredDeviceID" in SetupDict:
             try:
-                self.DesiredDeviceID = int(setup_dict["DesiredDeviceID"])
+                self.DesiredDeviceID = int(SetupDict["DesiredDeviceID"])
             except:
                 print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Error, DesiredDeviceID invalid.")
         else:
@@ -374,8 +357,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "NameToDisplay_UserSet" in setup_dict:
-            self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
+        if "NameToDisplay_UserSet" in SetupDict:
+            self.NameToDisplay_UserSet = str(SetupDict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
 
@@ -385,8 +368,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "WaitForAttached_TimeoutDuration_Milliseconds" in setup_dict:
-            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", setup_dict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
+        if "WaitForAttached_TimeoutDuration_Milliseconds" in SetupDict:
+            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", SetupDict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
 
         else:
             self.WaitForAttached_TimeoutDuration_Milliseconds = 5000
@@ -397,8 +380,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in setup_dict:
-            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", setup_dict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
+        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in SetupDict:
+            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", SetupDict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
         else:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = 1
 
@@ -408,8 +391,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "EncoderUpdateDeltaT_ms" in setup_dict:
-            self.EncoderUpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncoderUpdateDeltaT_ms", setup_dict["EncoderUpdateDeltaT_ms"], 20.0, 1000.0))
+        if "EncoderUpdateDeltaT_ms" in SetupDict:
+            self.EncoderUpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("EncoderUpdateDeltaT_ms", SetupDict["EncoderUpdateDeltaT_ms"], 20.0, 1000.0))
         else:
             self.EncoderUpdateDeltaT_ms = 20
 
@@ -419,8 +402,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "EncodersList_CPR" in setup_dict:
-            EncodersList_CPR_TEMP = setup_dict["EncodersList_CPR"]
+        if "EncodersList_CPR" in SetupDict:
+            EncodersList_CPR_TEMP = SetupDict["EncodersList_CPR"]
             if self.IsInputList(EncodersList_CPR_TEMP) == 1 and len(EncodersList_CPR_TEMP) == self.NumberOfEncoders:
                 self.EncodersList_CPR = list()
                 for EncoderChannel, CPR_TEMP in enumerate(EncodersList_CPR_TEMP):
@@ -438,8 +421,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "EncodersList_SpeedExponentialFilterLambda" in setup_dict:
-            EncodersList_SpeedExponentialFilterLambda_TEMP = setup_dict["EncodersList_SpeedExponentialFilterLambda"]
+        if "EncodersList_SpeedExponentialFilterLambda" in SetupDict:
+            EncodersList_SpeedExponentialFilterLambda_TEMP = SetupDict["EncodersList_SpeedExponentialFilterLambda"]
             if self.IsInputList(EncodersList_SpeedExponentialFilterLambda_TEMP) == 1 and len(EncodersList_SpeedExponentialFilterLambda_TEMP) == self.NumberOfEncoders:
                 self.EncodersList_SpeedExponentialFilterLambda = list()
                 for EncoderChannel, SpeedExponentialFilterLambda_TEMP in enumerate(EncodersList_SpeedExponentialFilterLambda_TEMP):
@@ -457,8 +440,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "EncodersList_ElectricalIOmode" in setup_dict:
-            EncodersList_ElectricalIOmode_TEMP = setup_dict["EncodersList_ElectricalIOmode"]
+        if "EncodersList_ElectricalIOmode" in SetupDict:
+            EncodersList_ElectricalIOmode_TEMP = SetupDict["EncodersList_ElectricalIOmode"]
             if self.IsInputList(EncodersList_ElectricalIOmode_TEMP) == 1 and len(EncodersList_ElectricalIOmode_TEMP) == self.NumberOfEncoders:
                 self.EncodersList_ElectricalIOmode = list()
                 for EncoderChannel, ElectricalIOmode_TEMP in enumerate(EncodersList_ElectricalIOmode_TEMP):
@@ -479,8 +462,8 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
         #########################################################
         #########################################################
-        if "MainThread_TimeToSleepEachLoop" in setup_dict:
-            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", setup_dict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
+        if "MainThread_TimeToSleepEachLoop" in SetupDict:
+            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", SetupDict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.MainThread_TimeToSleepEachLoop = 0.005
@@ -494,13 +477,13 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
         try:
 
             for EncoderChannel in range(0, self.NumberOfEncoders):
-                self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
-                                                                                                                ("UseExponentialSmoothingFilterFlag", 1),
-                                                                                                                ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])])))
-                time.sleep(0.1)
-                LOWPASSFILTER_OPEN_FLAG = self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].OBJECT_CREATED_SUCCESSFULLY_FLAG
+                self.EncodersList_Speed_LowPassFilter_ListOfObjects.append(LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
+                                                                                                                        ("UseExponentialSmoothingFilterFlag", 1),
+                                                                                                                        ("ExponentialSmoothingFilterLambda", self.EncodersList_SpeedExponentialFilterLambda[EncoderChannel])])))
+
+                LowPassFilter_OPEN_FLAG = self.EncodersList_Speed_LowPassFilter_ListOfObjects[EncoderChannel].OBJECT_CREATED_SUCCESSFULLY_FLAG
     
-                if LOWPASSFILTER_OPEN_FLAG != 1:
+                if LowPassFilter_OPEN_FLAG != 1:
                     print("Phidgets1xEncoderENC1000_ReubenPython2and3Class __init__: Failed to open LowPassFilter_ReubenPython2and3ClassObject.")
                     return
 
@@ -647,19 +630,6 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
             #########################################################
             #########################################################
-            if self.USE_GUI_FLAG == 1:
-                self.StartGUI(self.root)
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
-            time.sleep(0.25)
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
             self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 1
             #########################################################
             #########################################################
@@ -672,72 +642,200 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
-    def __del__(self):
-        pass
+    def LimitNumber_IntOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
+
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = int(test_val)
+
+        return test_val
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber):
+    def LimitNumber_FloatOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
 
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = float(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a numerical value, Exceptions: %s" % exceptions)
 
-        try:
-            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThrough0and1values_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be 0 or 1 (value was " +
-                          str(InputNumber_ConvertedToFloat) +
-                          "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1.0:
+                return InputNumber_ConvertedToFloat
+
+            else:
+
+                print("PassThrough0and1values_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be 0 or 1 (value was " +
+                      str(InputNumber_ConvertedToFloat) +
+                      ").")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+
+                else:
+                    return -1
+                ##########################
+
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue):
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
 
-        try:
-            if InputNumber_ConvertedToFloat >= RangeMinValue and InputNumber_ConvertedToFloat <= RangeMaxValue:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be in the range [" +
-                          str(RangeMinValue) +
-                          ", " +
-                          str(RangeMaxValue) +
-                          "] (value was " +
-                          str(InputNumber_ConvertedToFloat) + "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            InputNumber_ConvertedToFloat_Limited = self.LimitNumber_FloatOutputOnly(RangeMinValue, RangeMaxValue, InputNumber_ConvertedToFloat)
+
+            if InputNumber_ConvertedToFloat_Limited != InputNumber_ConvertedToFloat:
+                print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be in the range [" +
+                      str(RangeMinValue) +
+                      ", " +
+                      str(RangeMaxValue) +
+                      "] (value was " +
+                      str(InputNumber_ConvertedToFloat) + ")")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+                else:
+                    return -11111.0
+                ##########################
+
+            else:
+                return InputNumber_ConvertedToFloat_Limited
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -837,7 +935,7 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
             self.EncodersList_Speed_RPS_Raw[EncoderChannel] = self.EncodersList_Speed_EncoderTicksPerSecond_Raw[EncoderChannel]/(4.0*self.EncodersList_CPR[EncoderChannel])
             self.EncodersList_Speed_RPM_Raw[EncoderChannel] = self.EncodersList_Speed_RPS_Raw[EncoderChannel]*60.0
 
-            self.EncodersList_Speed_EncoderTicksPerSecond_Filtered[EncoderChannel] = self.EncodersList_Speed_LowPassFilter_ReubenPython2and3ClassObject[EncoderChannel].AddDataPointFromExternalProgram(self.EncodersList_Speed_EncoderTicksPerSecond_Raw[EncoderChannel])["SignalOutSmoothed"]
+            self.EncodersList_Speed_EncoderTicksPerSecond_Filtered[EncoderChannel] = self.EncodersList_Speed_LowPassFilter_ListOfObjects[EncoderChannel].AddDataPointFromExternalProgram(self.EncodersList_Speed_EncoderTicksPerSecond_Raw[EncoderChannel])["SignalOutSmoothed"]
             self.EncodersList_Speed_RPS_Filtered[EncoderChannel] = self.EncodersList_Speed_EncoderTicksPerSecond_Filtered[EncoderChannel]/(4.0*self.EncodersList_CPR[EncoderChannel])
             self.EncodersList_Speed_RPM_Filtered[EncoderChannel] = self.EncodersList_Speed_RPS_Filtered[EncoderChannel] * 60.0
         ################################
@@ -1029,23 +1127,13 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent):
+    def CreateGUIobjects(self, TkinterParent):
 
-        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        self.GUI_Thread_ThreadingObject.start()
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def GUI_Thread(self, parent):
-
-        print("Starting the GUI_Thread for Phidgets1xEncoderENC1000_ReubenPython2and3Class object.")
+        print("Phidgets1xEncoderENC1000_ReubenPython2and3Class, CreateGUIobjects event fired.")
 
         #################################################
-        self.root = parent
-        self.parent = parent
+        self.root = TkinterParent
+        self.parent = TkinterParent
         #################################################
 
         #################################################
@@ -1384,3 +1472,36 @@ class Phidgets1xEncoderENC1000_ReubenPython2and3Class(Frame): #Subclass the Tkin
     ##########################################################################################################
     ##########################################################################################################
 
+    ##########################################################################################################
+    ##########################################################################################################
+    def ConvertDictToProperlyFormattedStringForPrinting(self, DictToPrint, NumberOfDecimalsPlaceToUse = 3, NumberOfEntriesPerLine = 1, NumberOfTabsBetweenItems = 3):
+
+        ProperlyFormattedStringForPrinting = ""
+        ItemsPerLineCounter = 0
+
+        for Key in DictToPrint:
+
+            ##########################################################################################################
+            if isinstance(DictToPrint[Key], dict): #RECURSION
+                ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
+                                                     str(Key) + ":\n" + \
+                                                     self.ConvertDictToProperlyFormattedStringForPrinting(DictToPrint[Key], NumberOfDecimalsPlaceToUse, NumberOfEntriesPerLine, NumberOfTabsBetweenItems)
+
+            else:
+                ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
+                                                     str(Key) + ": " + \
+                                                     self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(DictToPrint[Key], 0, NumberOfDecimalsPlaceToUse)
+            ##########################################################################################################
+
+            ##########################################################################################################
+            if ItemsPerLineCounter < NumberOfEntriesPerLine - 1:
+                ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + "\t"*NumberOfTabsBetweenItems
+                ItemsPerLineCounter = ItemsPerLineCounter + 1
+            else:
+                ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + "\n"
+                ItemsPerLineCounter = 0
+            ##########################################################################################################
+
+        return ProperlyFormattedStringForPrinting
+    ##########################################################################################################
+    ##########################################################################################################
